@@ -8,6 +8,6 @@ services:
     envVars:
       - key: PORT
         value: 80
-      - key: BOT_CONFIG_URL
-        # value: BOT_CONFIG_URL
+      - key: CONFIG_FILE_URL
+        # value: CONFIG_FILE_URL
         sync: false
