@@ -206,6 +206,14 @@ class GoogleDriveHelper:
             if ospath.isfile(file_path):
                 mime_type = get_mime_type(file_path)
                 link = self.__upload_file(file_path, file_name, mime_type, GDRIVEID)
+                 try:
+                    file_id = self.__getIdFromUrl(link)
+                    meta = self.__getFileMetadata(file_id)
+                    mime_type = meta.get("mimeType")
+                    if mime_type == self.__G_DRIVE_DIR_MIME_TYPE:
+                        dir_id = self.__create_directory(meta.get('name'), GDRIVEID)
+                        self.__cloneFolder(meta.get('name'), meta.get('name'), meta.get('id'), dir_id)
+                        link = self.__G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(dir_id)
                 if self.__is_cancelled:
                     return
                 if link is None:
