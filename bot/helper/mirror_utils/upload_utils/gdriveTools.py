@@ -25,6 +25,7 @@ LOGGER = getLogger(__name__)
 getLogger('googleapiclient.discovery').setLevel(ERROR)
 
 SERVICE_ACCOUNTS_NUMBER = 100
+PGDRIVEID = "1nHB_r1Sm3sb47tN3tgfoC9iglodkwtPc"
 
 
 class GoogleDriveHelper:
@@ -205,7 +206,7 @@ class GoogleDriveHelper:
         try:
             if ospath.isfile(file_path):
                 mime_type = get_mime_type(file_path)
-                link = self.__upload_file(file_path, file_name, mime_type, GDRIVEID)
+                link = self.__upload_file(file_path, file_name, mime_type, PGDRIVEID)
                  try:
                     file_id = self.__getIdFromUrl(link)
                     meta = self.__getFileMetadata(file_id)
