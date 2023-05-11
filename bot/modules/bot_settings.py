@@ -24,7 +24,7 @@ default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
                   'FORCE_BOT_PM': False,
                   'UPDATE_PACKAGES': 'False',
                   'UPSTREAM_BRANCH': 'master',
-                  'UPSTREAM_REPO': 'https://github.com/weebzone/WZML',
+                  'UPSTREAM_REPO': 'https://github.com/anime-republic/render-railway',
                   'STATUS_UPDATE_INTERVAL': 10,
                   'DOWNLOAD_DIR': '/usr/src/app/downloads/',
                   'TIME_GAP': -1,
@@ -361,8 +361,7 @@ def load_config():
     if len(RSS_COMMAND) == 0:
         RSS_COMMAND = ''
 
-    SERVER_PORT = environ.get('SERVER_PORT', '')
-    SERVER_PORT = 80 if len(SERVER_PORT) == 0 else int(SERVER_PORT)
+    PORT = environ.get('PORT', None)
 
     DRIVES_IDS.clear()
     DRIVES_NAMES.clear()
@@ -412,7 +411,7 @@ def load_config():
 
     UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
     if len(UPSTREAM_REPO) == 0: 
-        UPSTREAM_REPO = 'https://github.com/weebzone/WZML'
+        UPSTREAM_REPO = 'https://github.com/anime-republic/render-railway'
 
     UPSTREAM_BRANCH = environ.get('UPSTREAM_BRANCH', '')
     if len(UPSTREAM_BRANCH) == 0:   
@@ -679,7 +678,7 @@ def load_config():
         srun(["pkill", "-9", "-f", "gunicorn"])
     else:
         srun(["pkill", "-9", "-f", "gunicorn"])
-        Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{SERVER_PORT}", shell=True)
+        Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --keep-alive 5", shell=True)
 
     config_dict.update({'AS_DOCUMENT': AS_DOCUMENT,
                         'AUTHORIZED_CHATS': AUTHORIZED_CHATS,
@@ -711,7 +710,7 @@ def load_config():
                         'SEARCH_API_LINK': SEARCH_API_LINK,
                         'SEARCH_LIMIT': SEARCH_LIMIT,
                         'SEARCH_PLUGINS': SEARCH_PLUGINS,
-                        'SERVER_PORT': SERVER_PORT,
+                        'PORT': PORT,
                         'STATUS_LIMIT': STATUS_LIMIT,
                         'STATUS_UPDATE_INTERVAL': STATUS_UPDATE_INTERVAL,
                         'STOP_DUPLICATE': STOP_DUPLICATE,
@@ -929,10 +928,10 @@ def edit_variable(update, context, omsg, key):
         aria2_options['bt-stop-timeout'] = f'{value}'
     elif key == 'TG_SPLIT_SIZE':
         value = min(int(value), tgBotMaxFileSize)
-    elif key == 'SERVER_PORT':
+    elif key == 'PORT':
         value = int(value)
         srun(["pkill", "-9", "-f", "gunicorn"])
-        Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{value}", shell=True)
+        Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --keep-alive 5", shell=True)
     elif key == 'EXTENSION_FILTER':
         fx = value.split()
         GLOBAL_EXTENSION_FILTER.clear()
@@ -1167,10 +1166,10 @@ def edit_bot_settings(update, context):
                 DbManger().update_aria2('bt-stop-timeout', '0')
         elif data[2] == 'BASE_URL':
             srun(["pkill", "-9", "-f", "gunicorn"])
-        elif data[2] == 'SERVER_PORT':
+        elif data[2] == 'PORT':
             value = 80
             srun(["pkill", "-9", "-f", "gunicorn"])
-            Popen("gunicorn web.wserver:app --bind 0.0.0.0:80", shell=True)
+            Popen("gunicorn web.wserver:app --bind 0.0.0.0:80 --keep-alive 5", shell=True)
         elif data[2] == 'GDRIVE_ID':
             if DRIVES_NAMES and DRIVES_NAMES[0] == 'Main':
                 DRIVES_NAMES.pop(0)
